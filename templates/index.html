@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Authentiq AI | Advanced Fake News & Scam Detector</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <div class="brand-mark">A</div>
+          <div>
+            <p class="eyebrow">AI PUBLIC SAFETY</p>
+            <h1>Authentiq AI</h1>
+          </div>
+        </div>
+
+        <nav class="nav-panel">
+          <button class="nav-btn active" data-target="analyzer">
+            <span class="nav-icon">⚡</span> Analyzer
+          </button>
+          <button class="nav-btn" data-target="how-it-works">
+            <span class="nav-icon">🔬</span> How It Works
+          </button>
+          <button class="nav-btn" data-target="model">
+            <span class="nav-icon">🧠</span> Model & Metrics
+          </button>
+          <button class="nav-btn" data-target="about">
+            <span class="nav-icon">ℹ️</span> About Project
+          </button>
+          <button class="nav-btn" data-target="history">
+            <span class="nav-icon">🕒</span> History <span class="badge-count" id="historyCount">0</span>
+          </button>
+        </nav>
+
+        <div class="mini-card">
+          <div class="status-indicator-row">
+            <span class="status-dot"></span>
+            <p class="status-title">Model Status</p>
+          </div>
+          <strong id="sidebarStatus">Ready & Active</strong>
+          <span id="sidebarArch">TF-IDF + ML Classifier</span>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <!-- ANALYZER PANEL -->
+        <section id="analyzer" class="panel active-panel">
+          <div class="topbar">
+            <div>
+              <p class="eyebrow">ARTICLE & CONTENT ANALYSIS</p>
+              <h2>Fake News & Disinformation Detector</h2>
+            </div>
+            <div class="sample-picker-container">
+              <span class="sample-label">Try Samples:</span>
+              <button class="sample-pill" data-sample-idx="0">Factual News</button>
+              <button class="sample-pill" data-sample-idx="2">Clickbait Myth</button>
+              <button class="sample-pill" data-sample-idx="4">Lottery Scam</button>
+            </div>
+          </div>
+
+          <div class="analyzer-grid">
+            <!-- INPUT CARD -->
+            <div class="input-card">
+              <div class="input-header">
+                <label for="articleInput" class="input-title">Input Content</label>
+                <div class="text-stats">
+                  <span class="stat-pill" id="wordCount">0 words</span>
+                  <span class="stat-pill" id="charCount">0 chars</span>
+                </div>
+              </div>
+
+              <textarea
+                id="articleInput"
+                placeholder="Paste an article, news headline, social media post, forwarded message, or suspicious email here to test authenticity..."
+                spellcheck="true"
+              ></textarea>
+
+              <div class="input-actions">
+                <div class="quick-samples">
+                  <button class="text-link-btn" id="sampleBtn">Load Random Sample</button>
+                </div>
+                <div class="stacked-actions">
+                  <button class="ghost-btn" id="clearBtn" title="Clear input text">Clear</button>
+                  <button class="primary-btn" id="analyzeBtn" title="Analyze content (Ctrl+Enter)">
+                    <span class="btn-icon">⚡</span> Analyze Article
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- RESULT CARD -->
+            <div class="result-card">
+              <div class="result-card-header">
+                <h3 class="result-card-title">Verdict & Confidence</h3>
+                <div class="result-actions">
+                  <button class="copy-btn" id="copyResultBtn" title="Copy analysis results" style="display: none;">
+                    📋 Copy Report
+                  </button>
+                </div>
+              </div>
+
+              <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+                <div class="spinner"></div>
+                <p class="spinner-text">Analyzing text patterns & linguistic signals...</p>
+              </div>
+
+              <div id="resultContent" class="result-content">
+                <!-- ICONIC CYBERNETIC CIRCULAR HUD -->
+                <div class="hud-score-wrapper" id="hudScoreWrapper">
+                  <div class="hud-ambient-glow" id="hudAmbientGlow"></div>
+                  
+                  <div class="iconic-circular-hud">
+                    <svg viewBox="0 0 240 240" class="hud-svg">
+                      <defs>
+                        <!-- Glow Filter Reliable (Cyan/Blue Neon) -->
+                        <filter id="neonGlowReliable" x="-30%" y="-30%" width="160%" height="160%">
+                          <feGaussianBlur stdDeviation="5" result="blur1" />
+                          <feGaussianBlur stdDeviation="12" result="blur2" />
+                          <feMerge>
+                            <feMergeNode in="blur2" />
+                            <feMergeNode in="blur1" />
+                            <feMergeNode in="SourceGraphic" />
+                          </feMerge>
+                        </filter>
+
+                        <!-- Glow Filter Misleading (Ruby/Coral Neon) -->
+                        <filter id="neonGlowMisleading" x="-30%" y="-30%" width="160%" height="160%">
+                          <feGaussianBlur stdDeviation="5" result="blur1" />
+                          <feGaussianBlur stdDeviation="12" result="blur2" />
+                          <feMerge>
+                            <feMergeNode in="blur2" />
+                            <feMergeNode in="blur1" />
+                            <feMergeNode in="SourceGraphic" />
+                          </feMerge>
+                        </filter>
+
+                        <!-- Gradients -->
+                        <linearGradient id="hudGradientReliable" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#00f2fe" />
+                          <stop offset="60%" stop-color="#4facfe" />
+                          <stop offset="100%" stop-color="#00d4d4" />
+                        </linearGradient>
+
+                        <linearGradient id="hudGradientMisleading" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stop-color="#ff0844" />
+                          <stop offset="60%" stop-color="#ff4757" />
+                          <stop offset="100%" stop-color="#ff9a8b" />
+                        </linearGradient>
+
+                        <radialGradient id="hudLensGradient" cx="50%" cy="50%" r="50%">
+                          <stop offset="0%" stop-color="rgba(18, 36, 68, 0.95)" />
+                          <stop offset="85%" stop-color="rgba(8, 16, 32, 0.98)" />
+                          <stop offset="100%" stop-color="rgba(0, 212, 212, 0.15)" />
+                        </radialGradient>
+                      </defs>
+
+                      <!-- Layer 1: Outer Precision Calibration Ring -->
+                      <circle cx="120" cy="120" r="114" class="hud-outer-ticks"></circle>
+
+                      <!-- Layer 2: Rotating Gyro Dash Ring (Clockwise) -->
+                      <circle cx="120" cy="120" r="108" class="hud-orbit-ring hud-orbit-cw"></circle>
+
+                      <!-- Layer 3: Counter-Rotating Gyro Ring -->
+                      <circle cx="120" cy="120" r="102" class="hud-orbit-ring hud-orbit-ccw"></circle>
+
+                      <!-- Layer 4: Main Track Background -->
+                      <circle cx="120" cy="120" r="88" class="hud-track-bg"></circle>
+
+                      <!-- Layer 5: Active Holographic Progress Ring -->
+                      <circle cx="120" cy="120" r="88" class="hud-progress-ring" id="hudProgressRing" style="stroke-dasharray: 0, 553"></circle>
+
+                      <!-- Layer 6: Inner Gyro Dash Ring -->
+                      <circle cx="120" cy="120" r="74" class="hud-inner-orbit"></circle>
+
+                      <!-- Layer 7: Central Hologram Lens -->
+                      <circle cx="120" cy="120" r="68" class="hud-lens-disc"></circle>
+                    </svg>
+
+                    <!-- Central High-Tech HUD Core Overlay -->
+                    <div class="hud-core-content">
+                      <div class="hud-icon-badge" id="hudIconBadge">
+                        <span class="hud-icon" id="hudStatusIcon">⚡</span>
+                      </div>
+                      <div class="hud-score-number-row">
+                        <span class="hud-score-value" id="scorePercentage">--%</span>
+                      </div>
+                      <div class="hud-verdict-pill" id="hudVerdictPill">
+                        <span class="hud-beacon-dot"></span>
+                        <span class="hud-verdict-text" id="scoreLabelText">AWAITING INPUT</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Executive AI Summary Callout -->
+                  <div class="hud-summary-card" id="hudSummaryCard">
+                    <div class="hud-summary-header">
+                      <span class="hud-summary-badge" id="hudSummaryBadge">INTELLIGENCE REPORT</span>
+                      <span class="hud-confidence-tag" id="hudConfidenceTag">Standby</span>
+                    </div>
+                    <p class="score-description" id="scoreSummaryText">
+                      Enter text above or click a sample to inspect news credibility, factual attribution, and misleading cues.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- DUAL SUB-METRIC HUD CARDS -->
+                <div class="hud-metrics-duo">
+                  <div class="hud-metric-card hud-metric-reliable">
+                    <div class="hud-metric-header">
+                      <div class="hud-metric-title-block">
+                        <span class="hud-metric-dot safe"></span>
+                        <span class="hud-metric-title">AUTHENTICITY</span>
+                      </div>
+                      <span class="hud-metric-number" id="reliablePatternValue">--%</span>
+                    </div>
+                    <div class="hud-bar-track">
+                      <div class="hud-bar-fill reliable" id="reliablePatternBar" style="width: 0%"></div>
+                    </div>
+                    <span class="hud-metric-subtitle" id="reliableSubtext">Factual Alignment</span>
+                  </div>
+
+                  <div class="hud-metric-card hud-metric-misleading">
+                    <div class="hud-metric-header">
+                      <div class="hud-metric-title-block">
+                        <span class="hud-metric-dot danger"></span>
+                        <span class="hud-metric-title">DECEPTION RISK</span>
+                      </div>
+                      <span class="hud-metric-number" id="misleadingPatternValue">--%</span>
+                    </div>
+                    <div class="hud-bar-track">
+                      <div class="hud-bar-fill misleading" id="misleadingPatternBar" style="width: 0%"></div>
+                    </div>
+                    <span class="hud-metric-subtitle" id="misleadingSubtext">Manipulative Threat</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SIGNALS & METRICS -->
+          <div class="signal-grid">
+            <div class="signal-card">
+              <div class="signal-card-header">
+                <h4>🔍 Detected Linguistic Signals</h4>
+                <span class="info-badge" title="Automated heuristic breakdown of stylistic and factual patterns">?</span>
+              </div>
+              <ul id="signalList" class="signal-list">
+                <li class="signal-item placeholder">
+                  <div class="signal-item-head">
+                    <span class="signal-name">Source Attribution</span>
+                    <span class="signal-pill pill-neutral">Pending</span>
+                  </div>
+                  <p class="signal-desc">References to peer-reviewed journals, verified agencies, and official spokespersons.</p>
+                </li>
+                <li class="signal-item placeholder">
+                  <div class="signal-item-head">
+                    <span class="signal-name">Clickbait & Sensationalism</span>
+                    <span class="signal-pill pill-neutral">Pending</span>
+                  </div>
+                  <p class="signal-desc">Hyperbolic phrasing designed to trigger impulsive curiosity or outrage.</p>
+                </li>
+                <li class="signal-item placeholder">
+                  <div class="signal-item-head">
+                    <span class="signal-name">Emotional Manipulation</span>
+                    <span class="signal-pill pill-neutral">Pending</span>
+                  </div>
+                  <p class="signal-desc">Fear-inducing, alarmist, or strongly biased wording.</p>
+                </li>
+                <li class="signal-item placeholder">
+                  <div class="signal-item-head">
+                    <span class="signal-name">Conspiracy Tropes</span>
+                    <span class="signal-pill pill-neutral">Pending</span>
+                  </div>
+                  <p class="signal-desc">Suppressed truth tropes, secret cabal claims, and debunked theories.</p>
+                </li>
+                <li class="signal-item placeholder">
+                  <div class="signal-item-head">
+                    <span class="signal-name">Spam / Fraud Signature</span>
+                    <span class="signal-pill pill-neutral">Pending</span>
+                  </div>
+                  <p class="signal-desc">Lottery advance-fee scams, prize traps, phishing links, or urgency payment prompts.</p>
+                </li>
+                <li class="signal-item placeholder">
+                  <div class="signal-item-head">
+                    <span class="signal-name">Stylometry & Quality</span>
+                    <span class="signal-pill pill-neutral">Pending</span>
+                  </div>
+                  <p class="signal-desc">Excessive capitalization, exclamation mark clusters, and structural anomalies.</p>
+                </li>
+              </ul>
+            </div>
+
+            <div class="signal-card metrics-card">
+              <div class="signal-card-header">
+                <h4>📊 Model Evaluation Metrics</h4>
+                <span class="info-badge" title="Trained Machine Learning Model performance on test dataset">ML Stats</span>
+              </div>
+              <div class="metrics-grid">
+                <div class="metric-box" title="Overall prediction correctness">
+                  <span>Accuracy</span>
+                  <strong id="metricAccuracy">--</strong>
+                </div>
+                <div class="metric-box" title="Proportion of true positive predictions">
+                  <span>Precision</span>
+                  <strong id="metricPrecision">--</strong>
+                </div>
+                <div class="metric-box" title="Proportion of actual positives caught">
+                  <span>Recall</span>
+                  <strong id="metricRecall">--</strong>
+                </div>
+                <div class="metric-box" title="Harmonic mean of Precision and Recall">
+                  <span>F1 Score</span>
+                  <strong id="metricF1">--</strong>
+                </div>
+              </div>
+              <div class="model-training-summary">
+                <div class="summary-line">
+                  <span>Training Samples:</span>
+                  <strong id="modelSampleCount">60+ curated cases</strong>
+                </div>
+                <div class="summary-line">
+                  <span>Classifier:</span>
+                  <strong>Logistic Regression + Sublinear TF-IDF</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- HOW IT WORKS PANEL -->
+        <section id="how-it-works" class="panel">
+          <div class="panel-header">
+            <p class="eyebrow">DETECTION PIPELINE</p>
+            <h3>How Authentiq AI Analyzes Articles</h3>
+          </div>
+          <div class="pipeline-grid">
+            <div class="step-card">
+              <span class="step-badge">01</span>
+              <h4>Input Normalization</h4>
+              <p>Text is stripped of URLs, anomalous characters, and excessive whitespace while preserving semantic punctuation and financial markers.</p>
+            </div>
+            <div class="step-card">
+              <span class="step-badge">02</span>
+              <h4>TF-IDF Vectorization</h4>
+              <p>N-gram feature extraction (1-word and 2-word combinations) with sublinear term-frequency weighting captures contextual phrasing.</p>
+            </div>
+            <div class="step-card">
+              <span class="step-badge">03</span>
+              <h4>ML Probability</h4>
+              <p>A balanced Logistic Regression classifier computes the core statistical likelihood of credible vs misleading language.</p>
+            </div>
+            <div class="step-card">
+              <span class="step-badge">04</span>
+              <h4>Linguistic Heuristics</h4>
+              <p>Multi-signal analyzers inspect source attribution, clickbait triggers, emotional bias, fraud vectors, and writing stylometry.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- MODEL PANEL -->
+        <section id="model" class="panel">
+          <div class="panel-header">
+            <p class="eyebrow">MACHINE LEARNING ARCHITECTURE</p>
+            <h3>Model Design & Explainability</h3>
+          </div>
+          <div class="text-block">
+            <h4>Explainable Hybrid Architecture</h4>
+            <p>
+              Authentiq AI combines statistical Machine Learning with rule-based linguistic verification to deliver transparent, explainable predictions rather than opaque black-box verdicts.
+            </p>
+            <h4>Feature Vector Representation</h4>
+            <p>
+              The system utilizes <code>scikit-learn</code>'s <code>TfidfVectorizer</code> configured with unigram and bigram ranges (<code>ngram_range=(1,2)</code>) and sublinear scaling. This allows the model to distinguish between genuine investigative phrasing ("official reported that") and sensational clickbait tropes ("you will never believe").
+            </p>
+            <h4>Multi-Signal Verification</h4>
+            <p>
+              In addition to ML classification, the engine performs active heuristic checks across 6 critical dimensions: Citation Attribution, Sensationalism Detection, Affective Manipulation, Conspiracy Signatures, Advance-Fee/Phishing Vectors, and Stylometric Quality.
+            </p>
+          </div>
+        </section>
+
+        <!-- ABOUT PANEL -->
+        <section id="about" class="panel">
+          <div class="panel-header">
+            <p class="eyebrow">PROJECT INFORMATION</p>
+            <h3>Authentiq AI Architecture & Stack</h3>
+          </div>
+          <div class="text-block">
+            <p>
+              <strong>Authentiq AI</strong> is a full-stack fake news, disinformation, and fraud detection dashboard engineered with modern web technologies:
+            </p>
+            <ul>
+              <li><strong>Backend Framework:</strong> Python Flask REST API</li>
+              <li><strong>Machine Learning:</strong> Scikit-Learn (TF-IDF Vectorizer + Logistic Regression)</li>
+              <li><strong>Database:</strong> SQLite with ISO 8601 audit history logging</li>
+              <li><strong>Frontend:</strong> Responsive HTML5, Modern CSS Variables, Asynchronous JavaScript</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- HISTORY PANEL -->
+        <section id="history" class="panel">
+          <div class="panel-header history-header">
+            <div>
+              <p class="eyebrow">AUDIT LOG</p>
+              <h3>Saved Analysis History</h3>
+            </div>
+            <div class="history-actions">
+              <button class="ghost-btn" id="clearHistoryBtn">Clear All History</button>
+            </div>
+          </div>
+
+          <div class="history-list" id="historyList">
+            <div class="empty-state">No saved analyses yet. Run an analysis to see historical records here.</div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
